@@ -15,9 +15,25 @@ from TTH.TTHNtupleAnalyzer.CrabHelpers import submit, status, kill, download, do
 
 # Ntuple name/version and samples to include
 name = "ntop"
-version = "v20"
+version = "v23_topSize_drOriginal_decayingHadtop"
 li_samples = [
-    "qcd_170_300_pythia8_13tev",
+    "qcd_pt_300_470_13tev_PU20bx25",
+    "qcd_pt_600_800_13tev_PU20bx25",
+    "qcd_pt_800_1000_13tev_PU20bx25",
+    "qcd_pt_1000_1400_13tev_PU20bx25",
+
+    "zprime_m1000_10p_13tev_PU20bx25",
+    "zprime_m2000_10p_13tev_PU20bx25",
+    "zprime_m3000_10p_13tev_PU20bx25",
+ 
+    "zprime_m1000_1p_13tev_PU20bx25",
+    "zprime_m2000_1p_13tev_PU20bx25",
+    "zprime_m3000_1p_13tev_PU20bx25",
+
+    #"zprime_m3000_1p_13tev_PU40bx50",
+    #"zprime_m3000_10p_13tev_PU40bx50",
+
+    #"qcd_170_300_pythia8_13tev",
     #"qcd_300_470_pythia8_13tev",
     #"qcd_470_600_pythia8_13tev",
     #"qcd_600_800_pythia8_13tev",    
@@ -36,7 +52,7 @@ li_samples = [
 
 cmssw_config_path = '/uscms/home/camclean/nobackup/PHYS14/CMSSW/src/TTH/TTHNtupleAnalyzer/python/'
 config_script_name = 'Taggers_cfg.py'
-storage_path = '/eos/uscms/store/user/camclean/testGregorFW/'
+storage_path = '/eos/uscms/store/user/camclean/TopTagEfficiency/PHYS14_PU20_BX25/'
 
 #######################################
 # Actual work
