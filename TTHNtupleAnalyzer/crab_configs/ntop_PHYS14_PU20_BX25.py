@@ -15,12 +15,13 @@ from TTH.TTHNtupleAnalyzer.CrabHelpers import submit, status, kill, download, do
 
 # Ntuple name/version and samples to include
 name = "ntop"
-version = "v27_topSize_drOriginal_decayingHadtop"
+version = "v28_topSize_drOriginal_decayingHadtop"
 li_samples = [
-    #"qcd_pt_300_470_13tev_PU20bx25",
+    "qcd_pt_300_470_13tev_PU20bx25",
+    #"qcd_pt_470_600_13tev_PU20bx25",
     #"qcd_pt_600_800_13tev_PU20bx25",
     #"qcd_pt_800_1000_13tev_PU20bx25",
-    "qcd_pt_1000_1400_13tev_PU20bx25",
+    #"qcd_pt_1000_1400_13tev_PU20bx25",
 
     #"zprime_m1000_10p_13tev_PU20bx25",
     #"zprime_m2000_10p_13tev_PU20bx25",
@@ -28,7 +29,7 @@ li_samples = [
  
     #"zprime_m1000_1p_13tev_PU20bx25",
     #"zprime_m2000_1p_13tev_PU20bx25",
-    "zprime_m3000_1p_13tev_PU20bx25",
+    #"zprime_m3000_1p_13tev_PU20bx25",
 
     #"zprime_m3000_1p_13tev_PU40bx50",
     #"zprime_m3000_10p_13tev_PU40bx50",

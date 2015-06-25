@@ -222,7 +222,7 @@ htt_sj_float_branches =  ["energy", "eta", "mass", "phi", "pt"]
 
 htt_sj_int_branches =  ["parent_idx"]
 
-for htt_name in ["looseMultiRHTT"]:
+for htt_name in ["looseMultiRHTT","softdropz20b10MultiRHTT"]:
 
     # How many objects do we have?
     tagger_counter_name = "n__jet_{0}".format(htt_name)

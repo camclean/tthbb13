@@ -215,37 +215,65 @@ void fill_fatjet_branches(const edm::Event& iEvent,
 			  // hard partons for matching
 			  const vector<const reco::Candidate*>  & hard_partons,
 			  // true higgs for matching
-			  const vector<const reco::Candidate*>  & gen_higgs
+			  const vector<const reco::Candidate*>  & gen_higgs,
+			  bool fj_usesubjets
 			  ){
   
-  // Get Fatjet iteself
+  // Get Fatjet iteself  
+  
+  //cout<<"test 1"<<endl;
+
   edm::Handle<CollectionType>  fatjets;
-  iEvent.getByLabel(fj_object_name, fatjets);
-	  
+  //edm::Handle<CollectionType>  subjets;
+  
+  //cout<<"test 2"<<endl;
+  
+  if (fj_usesubjets)
+    iEvent.getByLabel(fj_object_name, "SubJets", fatjets);
+  else
+    iEvent.getByLabel(fj_object_name, fatjets);
+    
+  //cout<<"fj_object_name: "<<fj_object_name<<endl;
+
   // Handles to get the Nsubjettiness
   edm::Handle<edm::ValueMap<float> > fatjet_nsub_tau1;
-  iEvent.getByLabel(fj_nsubs_name, "tau1", fatjet_nsub_tau1);
-
   edm::Handle<edm::ValueMap<float> > fatjet_nsub_tau2;
-  iEvent.getByLabel(fj_nsubs_name, "tau2", fatjet_nsub_tau2);
-	  
   edm::Handle<edm::ValueMap<float> > fatjet_nsub_tau3;
-  iEvent.getByLabel(fj_nsubs_name, "tau3", fatjet_nsub_tau3);
+  if (fj_nsubs_name != "None"){
 
-  // Make sure the fatjets and nsujettiness containers have same size
-  assert(fatjets->size()==fatjet_nsub_tau1->size());
-  assert(fatjets->size()==fatjet_nsub_tau2->size());
-  assert(fatjets->size()==fatjet_nsub_tau3->size());
+    //cout<<"fj_nsubs_name: "<<fj_nsubs_name<<endl;
+
+    iEvent.getByLabel(fj_nsubs_name, "tau1", fatjet_nsub_tau1);
+    iEvent.getByLabel(fj_nsubs_name, "tau2", fatjet_nsub_tau2);
+    iEvent.getByLabel(fj_nsubs_name, "tau3", fatjet_nsub_tau3);
+
+    //cout<<"fj_size: "<<fatjets->size()<<endl;
+    //cout<<"fj_nsub_tau1_size: "<<fatjet_nsub_tau1->size()<<endl;
+
+    // Make sure the fatjets and nsujettiness containers have same size
+    //cout<<"fj_nsubs_name: "<<fj_nsubs_name<<endl;
+    assert(fatjets->size()==fatjet_nsub_tau1->size());
+    assert(fatjets->size()==fatjet_nsub_tau2->size());
+    assert(fatjets->size()==fatjet_nsub_tau3->size());  
+  }
+
+  //cout<<"test 4"<<endl;
 
   // Handle to get the Shower Deconstruction info
   edm::Handle<edm::ValueMap<double> > fatjet_sd_chi;
-  if (fj_sds_name != "None")
+  edm::Handle<edm::ValueMap<int> > fatjet_sd_nmj;
+  if (fj_sds_name != "None"){
     iEvent.getByLabel(fj_sds_name, "chi", fatjet_sd_chi);
+    iEvent.getByLabel(fj_sds_name, "nmicrojets", fatjet_sd_nmj);
+  }
+
+  //cout<<"test 5"<<endl;
 
   // b-tag discriminators handle
   edm::Handle<reco::JetTagCollection> btagDiscriminators;
-  if (fj_btags_name != "None")
+  if (fj_btags_name != "None"){
     iEvent.getByLabel(fj_btags_name, btagDiscriminators);
+  }
 
   // Q-jet volatility handle
   edm::Handle<edm::ValueMap<float> > QjetVols;
@@ -270,17 +298,22 @@ void fill_fatjet_branches(const edm::Event& iEvent,
     tthtree->get_address<float *>(prefix + "mass")[n_fat_jet] = x.mass();
 
     // NSubjettiness
-    tthtree->get_address<float *>(prefix + "tau1")[n_fat_jet] = fatjet_nsub_tau1->get(n_fat_jet);
-    tthtree->get_address<float *>(prefix + "tau2")[n_fat_jet] = fatjet_nsub_tau2->get(n_fat_jet);
-    tthtree->get_address<float *>(prefix + "tau3")[n_fat_jet] = fatjet_nsub_tau3->get(n_fat_jet);
+    if (fj_nsubs_name != "None"){
+      tthtree->get_address<float *>(prefix + "tau1")[n_fat_jet] = fatjet_nsub_tau1->get(n_fat_jet);
+      tthtree->get_address<float *>(prefix + "tau2")[n_fat_jet] = fatjet_nsub_tau2->get(n_fat_jet);
+      tthtree->get_address<float *>(prefix + "tau3")[n_fat_jet] = fatjet_nsub_tau3->get(n_fat_jet);
+    }     
 
     // Shower Deconstruction
-    if (fj_sds_name != "None")
+    if (fj_sds_name != "None"){
       tthtree->get_address<float *>(prefix + "chi")[n_fat_jet] = fatjet_sd_chi->get(n_fat_jet);
+      tthtree->get_address<int *>(prefix   + "nmj")[n_fat_jet] = fatjet_sd_nmj->get(n_fat_jet);
+    }
 
     // B-tag
-    if (fj_btags_name != "None")
+    if (fj_btags_name != "None"){
       tthtree->get_address<float *>(prefix + "btag")[n_fat_jet] = (*btagDiscriminators)[n_fat_jet].second;
+    }
 
     // Q-jet volatility
     if (fj_qvols_name != "None")
@@ -424,7 +457,7 @@ private:
         // btags = name of the btagger processes (or None) 
         // qvols = name of the QJet volatility processes (or None) 
         // fatjet branches = name of the branches to put this in
-        // isbasicjets = data type of the fat jet (BasicJet or PFJet)
+        // usesubjets = either use that jet object or the "SubJets" field
         // !!the lists have to be in sync!!
 	const std::vector<std::string> fatjet_objects_;
 	const std::vector<std::string> fatjet_nsubs_;
@@ -432,13 +465,15 @@ private:
 	const std::vector<std::string> fatjet_btags_;
 	const std::vector<std::string> fatjet_qvols_;
 	const std::vector<std::string> fatjet_branches_;
-	const std::vector<int> fatjet_isbasicjets_;
+	const std::vector<int> fatjet_usesubjets_;
 
         // HEPTopTagger information
         // objects = name of the input collection
         // htt branches = name of the branches to put this in
         // !!the lists have to be in sync!!
 	const std::vector<std::string> htt_objects_;
+        const std::vector<std::string> htt_nsubs_;
+        //const std::vector<std::string> htt_btags_;
 	const std::vector<std::string> htt_branches_;
 
         // CMSTopTagger information
@@ -447,6 +482,8 @@ private:
         // cmstt branches = name of the branches to put this in
         // !!the lists have to be in sync!!
 	const std::vector<std::string> cmstt_objects_;
+        const std::vector<std::string> cmstt_nsubs_;
+        const std::vector<std::string> cmstt_btags_;
 	const std::vector<std::string> cmstt_infos_;
 	const std::vector<std::string> cmstt_branches_;
 	
@@ -515,12 +552,16 @@ TTHNtupleAnalyzer::TTHNtupleAnalyzer(const edm::ParameterSet& iConfig) :
         fatjet_btags_(iConfig.getParameter<std::vector<std::string>>("fatjetsBtags")),
         fatjet_qvols_(iConfig.getParameter<std::vector<std::string>>("fatjetsQvols")),
         fatjet_branches_(iConfig.getParameter<std::vector<std::string>>("fatjetsBranches")),
-        fatjet_isbasicjets_(iConfig.getParameter<std::vector<int>>("fatjetsIsBasicJets")),
+        fatjet_usesubjets_(iConfig.getParameter<std::vector<int>>("fatjetsUsesubjets")),
 
         htt_objects_(iConfig.getParameter<std::vector<std::string>>("httObjects")),
+	htt_nsubs_(iConfig.getParameter<std::vector<std::string>>("httNsubs")),
+	//htt_btags_(iConfig.getParameter<std::vector<std::string>>("httBtags")),
         htt_branches_(iConfig.getParameter<std::vector<std::string>>("httBranches")),
 
         cmstt_objects_(iConfig.getParameter<std::vector<std::string>>("cmsttObjects")),
+	cmstt_nsubs_(iConfig.getParameter<std::vector<std::string>>("cmsttNsubs")),
+	cmstt_btags_(iConfig.getParameter<std::vector<std::string>>("cmsttBtags")),
         cmstt_infos_(iConfig.getParameter<std::vector<std::string>>("cmsttInfos")),
         cmstt_branches_(iConfig.getParameter<std::vector<std::string>>("cmsttBranches")),
 							  
@@ -530,6 +571,7 @@ TTHNtupleAnalyzer::TTHNtupleAnalyzer(const edm::ParameterSet& iConfig) :
 
 
 	//output
+	//tthtree(TTHTree(fs->make<TTree>("events", "events"))),
 	tthtree(new TTHTree(fs->make<TTree>("events", "events"))),
 	config_dump(fs->make<TNamed>("configdump", iConfig.dump().c_str())),
 	hcounter(fs->make<TH1D>("event_counter", "event_counter", 5, 0, 5)),
@@ -632,17 +674,22 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 
 	// Sanity check the fatjet lists-of-names
+
 	assert(fatjet_objects_.size()==fatjet_nsubs_.size());
 	assert(fatjet_objects_.size()==fatjet_sds_.size());
 	assert(fatjet_objects_.size()==fatjet_btags_.size());
 	assert(fatjet_objects_.size()==fatjet_qvols_.size());
 	assert(fatjet_objects_.size()==fatjet_branches_.size());
-	assert(fatjet_objects_.size()==fatjet_isbasicjets_.size());
+	assert(fatjet_objects_.size()==fatjet_usesubjets_.size());
 
 	// Sanity check the htt lists-of-names
 	assert(htt_objects_.size()==htt_branches_.size());
+	assert(htt_objects_.size()==htt_nsubs_.size());
+	//assert(htt_objects_.size()==htt_btags_.size());
 
 	// Sanity check the cmstt lists-of-names
+	assert(cmstt_objects_.size()==cmstt_nsubs_.size());
+	assert(cmstt_objects_.size()==cmstt_btags_.size());
 	assert(cmstt_objects_.size()==cmstt_branches_.size());
 	assert(cmstt_objects_.size()==cmstt_infos_.size());
 	       
@@ -1525,11 +1572,31 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 	  // Get the proper names
 	  std::string htt_object_name   = htt_objects_[i_htt_coll];
+	  std::string htt_nsubs_name   = htt_nsubs_[i_htt_coll];
+	  //std::string htt_btag_name   = htt_btags_[i_htt_coll];
 	  std::string htt_branches_name = htt_branches_[i_htt_coll];
  	  
 	  // Top tagger jets
 	  edm::Handle<edm::View<reco::BasicJet>> top_jets;
 	  iEvent.getByLabel(htt_object_name, top_jets);
+
+	  // Handles to get the Nsubjettiness
+	  edm::Handle<edm::ValueMap<float> > htt_nsub_tau1;
+	  edm::Handle<edm::ValueMap<float> > htt_nsub_tau2;
+	  edm::Handle<edm::ValueMap<float> > htt_nsub_tau3;
+	    
+	  iEvent.getByLabel(htt_nsubs_name, "tau1", htt_nsub_tau1);
+	  iEvent.getByLabel(htt_nsubs_name, "tau2", htt_nsub_tau2);
+	  iEvent.getByLabel(htt_nsubs_name, "tau3", htt_nsub_tau3);
+	  
+	  // Make sure the htt jets and nsujettiness containers have same size
+	  assert(top_jets->size()==htt_nsub_tau1->size());
+	  assert(top_jets->size()==htt_nsub_tau2->size());
+	  assert(top_jets->size()==htt_nsub_tau3->size());  
+	  
+	  // b-tag discriminators handle
+	  //edm::Handle<reco::JetTagCollection> top_jet_btagDiscriminators;
+	  //iEvent.getByLabel(htt_btag_name, top_jet_btagDiscriminators);
 
 	  // Extra Info
 	  edm::Handle<edm::View<reco::HTTTopJetTagInfo>> top_jet_infos;
@@ -1560,6 +1627,13 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	    tthtree->get_address<float *>(prefix + "pt"     )[n_top_jet] = x.pt();
 	    tthtree->get_address<float *>(prefix + "phi"    )[n_top_jet] = x.phi();
 	    tthtree->get_address<float *>(prefix + "mass"   )[n_top_jet] = x.mass();
+
+	    // NSubjettiness
+	    if (htt_nsubs_name != "None"){
+	      tthtree->get_address<float *>(prefix + "tau1")[n_top_jet] = htt_nsub_tau1->get(n_top_jet);
+	      tthtree->get_address<float *>(prefix + "tau2")[n_top_jet] = htt_nsub_tau2->get(n_top_jet);
+	      tthtree->get_address<float *>(prefix + "tau3")[n_top_jet] = htt_nsub_tau3->get(n_top_jet);
+	    }     
 
 	    tthtree->get_address<float *>(prefix + "fj_pt"   )[n_top_jet] = jet_info.properties().fjPt;
 	    tthtree->get_address<float *>(prefix + "fj_mass" )[n_top_jet] = jet_info.properties().fjMass;
@@ -1608,6 +1682,8 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	      tthtree->get_address<float *>(prefix_sj + "phi" )[n_top_jet_subjet]  = constituent->phi();
 	      tthtree->get_address<float *>(prefix_sj + "mass" )[n_top_jet_subjet]  = constituent->mass();
 	      tthtree->get_address<float *>(prefix_sj + "energy" )[n_top_jet_subjet]  = constituent->energy();
+	      
+	      //tthtree->get_address<float *>(prefix_sj + "btag")[n_top_jet_subjet] = (*top_jet_btagDiscriminators)[n_top_jet_subjet].second;
 
 	      tthtree->get_address<int *>(prefix_sj + "parent_idx" )[n_top_jet_subjet]  = n_top_jet;
 
@@ -1635,6 +1711,8 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 	  // Get the proper names
 	  std::string cmstt_object_name   = cmstt_objects_[i_cmstt_coll];
+	  std::string cmstt_nsubs_name   = cmstt_nsubs_[i_cmstt_coll];
+	  std::string cmstt_btag_name   = cmstt_btags_[i_cmstt_coll];
 	  std::string cmstt_infos_name    = cmstt_infos_[i_cmstt_coll];
 	  std::string cmstt_branches_name = cmstt_branches_[i_cmstt_coll];
  	  
@@ -1642,14 +1720,35 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	  edm::Handle<edm::View<reco::BasicJet>> top_jets;
 	  iEvent.getByLabel(cmstt_object_name, top_jets);
 
+	  // Top tagger subjets
+	  //edm::Handle<edm::View<reco::BasicJet>> top_subjets;
+	  //iEvent.getByLabel(cmstt_object_name, "SubJets", top_subjets);
+
 	  // Extra Info
 	  edm::Handle<edm::View<reco::CATopJetTagInfo>> top_jet_infos;
 	  iEvent.getByLabel(cmstt_infos_name, top_jet_infos);
 
+	  // Handles to get the Nsubjettiness
+	  edm::Handle<edm::ValueMap<float> > cmstt_nsub_tau1;
+	  edm::Handle<edm::ValueMap<float> > cmstt_nsub_tau2;
+	  edm::Handle<edm::ValueMap<float> > cmstt_nsub_tau3;
+	    
+	  iEvent.getByLabel(cmstt_nsubs_name, "tau1", cmstt_nsub_tau1);
+	  iEvent.getByLabel(cmstt_nsubs_name, "tau2", cmstt_nsub_tau2);
+	  iEvent.getByLabel(cmstt_nsubs_name, "tau3", cmstt_nsub_tau3);
+	  
+	  // Make sure the cmstt jets and nsujettiness containers have same size
+	  assert(top_jets->size()==cmstt_nsub_tau1->size());
+	  assert(top_jets->size()==cmstt_nsub_tau2->size());
+	  assert(top_jets->size()==cmstt_nsub_tau3->size());  
+	  
+	  // b-tag discriminators handle
+	  edm::Handle<reco::JetTagCollection> top_jet_btagDiscriminators;
+	  iEvent.getByLabel(cmstt_btag_name, top_jet_btagDiscriminators);
+ 
 	  // Make sure both collections have the same size
 	  assert(top_jets->size()==top_jet_infos->size());
-
-
+	  
 	  // Top jets and subjets are associated by indices. See:
 	  // /cvmfs/cms.cern.ch/slc6_amd64_gcc481/cms/cmssw/CMSSW_7_0_9/src/RecoJets/JetProducers/plugins/CompoundJetProducer.cc
 	  // about the association
@@ -1674,7 +1773,14 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	    tthtree->get_address<float *>(prefix + "wMass" )[n_top_jet] = jet_info.properties().wMass;
 	    tthtree->get_address<float *>(prefix + "topMass" )[n_top_jet] = jet_info.properties().topMass;
 	    tthtree->get_address<int   *>(prefix + "nSubJets" )[n_top_jet] = jet_info.properties().nSubJets;
-	   
+
+	    // NSubjettiness
+	    if (cmstt_nsubs_name != "None"){
+	      tthtree->get_address<float *>(prefix + "tau1")[n_top_jet] = cmstt_nsub_tau1->get(n_top_jet);
+	      tthtree->get_address<float *>(prefix + "tau2")[n_top_jet] = cmstt_nsub_tau2->get(n_top_jet);
+	      tthtree->get_address<float *>(prefix + "tau3")[n_top_jet] = cmstt_nsub_tau3->get(n_top_jet);
+	    }     
+
 	    // Optional: Fill truth matching information
 	    if (ADD_TRUE_TOP_MATCHING_FOR_CMSTT)
 	      fill_truth_matching<reco::BasicJet>(tthtree, x, n_top_jet, hadronic_ts, prefix, "hadtop");
@@ -1702,6 +1808,7 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	      tthtree->get_address<float *>(prefix_sj + "phi" )[n_top_jet_subjet]  = constituent->phi();
 	      tthtree->get_address<float *>(prefix_sj + "mass" )[n_top_jet_subjet]  = constituent->mass();
 	      tthtree->get_address<float *>(prefix_sj + "energy" )[n_top_jet_subjet]  = constituent->energy();
+	      tthtree->get_address<float *>(prefix_sj + "btag")[n_top_jet_subjet] = (*top_jet_btagDiscriminators)[n_top_jet_subjet].second;
 
 	      tthtree->get_address<int *>(prefix_sj + "parent_idx" )[n_top_jet_subjet]  = n_top_jet;
 
@@ -1734,9 +1841,9 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 		throw std::exception();
 	}
 
+	//cout<<"Filling fatjet branches!"<<endl;
 	// Loop over fatjet collections
 	for (unsigned i_fj_coll = 0; i_fj_coll < fatjet_objects_.size(); i_fj_coll++){
-
 	  // Get the proper names
 	  std::string fj_object_name	  = fatjet_objects_[i_fj_coll];
 	  std::string fj_nsubs_name	  = fatjet_nsubs_[i_fj_coll];
@@ -1744,42 +1851,21 @@ TTHNtupleAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	  std::string fj_btags_name	  = fatjet_btags_[i_fj_coll];
 	  std::string fj_qvols_name	  = fatjet_qvols_[i_fj_coll];
 	  std::string fj_branches_name    = fatjet_branches_[i_fj_coll];
-	  int fj_isbasicjets              = fatjet_isbasicjets_[i_fj_coll];
+	  int fj_usesubjets              = fatjet_usesubjets_[i_fj_coll];
 	  
-	  // Fill PFJets
-	  if (fj_isbasicjets==0){
-	    fill_fatjet_branches<reco::PFJet, reco::PFJetCollection>(iEvent, 
-								     tthtree, 
-								     fj_object_name,
-								     fj_nsubs_name,
-								     fj_sds_name,
-								     fj_btags_name,
-								     fj_qvols_name,
-								     fj_branches_name,
-								     hadronic_ts,
-								     hard_partons,
-								     gen_higgs
-								     );
-	  }
-	  // Fill BasicJets
-	  else if (fj_isbasicjets==1){
-	    fill_fatjet_branches<reco::BasicJet, reco::BasicJetCollection>(iEvent, 
-									   tthtree, 
-									   fj_object_name,
-									   fj_nsubs_name,
-									   fj_sds_name,
-									   fj_btags_name,
-									   fj_qvols_name,
-									   fj_branches_name,
-									   hadronic_ts,
-									   hard_partons,
-									   gen_higgs
-									   );
-	  }
-	  else{
-	    edm::LogError("FJ") << "Invalid value for fj_isbasicjets (can be 0 or 1)" << fj_isbasicjets;
-	    throw std::exception();
-	  }
+	  fill_fatjet_branches<reco::PFJet, reco::PFJetCollection>(iEvent, 
+								   tthtree, 
+								   fj_object_name,
+								   fj_nsubs_name,
+								   fj_sds_name,
+								   fj_btags_name,
+								   fj_qvols_name,
+								   fj_branches_name,
+								   hadronic_ts,
+								   hard_partons,
+								   gen_higgs,
+								   fj_usesubjets
+								   );
 	 
 	} // End of loop over fatjet collections
 	// Done filling the fatjet information

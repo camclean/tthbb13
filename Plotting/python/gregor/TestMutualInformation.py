@@ -26,7 +26,7 @@ else:
 # output directory
 ########################################
 
-basepath = '/scratch/gregor/'
+basepath = '/eos/uscms/store/user/camclean/TopTagEfficiency/PHYS14_PU20_BX25/ntop_v20_drOriginal_decayingHadtop_13tev_PU20bx25/'
 
 #pair_name = "pt-470-to-600"
 #pair =  pairs[pair_name]
@@ -45,10 +45,16 @@ for pair_name, pair in pairs.iteritems():
         #mi(pair_name + "_taus_15", pair[0], pair[1],   tau_vars_15, fiducial_cut_and_weight, fiducial_cut_and_weight),
         #mi(pair_name + "_masses_08", pair[0], pair[1], mass_vars_08, fiducial_cut_and_weight, fiducial_cut_and_weight),
         #mi(pair_name + "_masses_15", pair[0], pair[1], mass_vars_15, fiducial_cut_and_weight, fiducial_cut_and_weight),
+        mi(pair_name + "_masses_std_08", pair[0], pair[1], mass_vars_std_08, fiducial_cut_and_weight, fiducial_cut_and_weight),
+        mi(pair_name + "_masses_std_15", pair[0], pair[1], mass_vars_std_15, fiducial_cut_and_weight, fiducial_cut_and_weight),
+        mi(pair_name + "_masses_topTagCuts_08", pair[0], pair[1], mass_vars_topTagCuts_08, fiducial_cut_and_weight, fiducial_cut_and_weight),
+        mi(pair_name + "_masses_topTagCuts_15", pair[0], pair[1], mass_vars_topTagCuts_15, fiducial_cut_and_weight, fiducial_cut_and_weight),
+        mi(pair_name + "_masses_minmass_topTagCuts_08", pair[0], pair[1], mass_minmass_vars_topTagCuts_08, fiducial_cut_and_weight, fiducial_cut_and_weight),
+        mi(pair_name + "_masses_minmass_topTagCuts_15", pair[0], pair[1], mass_minmass_vars_topTagCuts_15, fiducial_cut_and_weight, fiducial_cut_and_weight),
         #mi(pair_name + "_taggers", pair[0], pair[1], tagger_vars, fiducial_cut_and_weight, fiducial_cut_and_weight),
 
         #mi(pair_name + "_interesting", pair[0], pair[1], interesting_vars_470_600,fiducial_cut_and_weight,fiducial_cut_and_weight),
-        mi(pair_name + "_htt", pair[0], pair[1], htt_vars,fiducial_cut_and_weight, fiducial_cut_and_weight),
+        #mi(pair_name + "_htt", pair[0], pair[1], htt_vars,fiducial_cut_and_weight, fiducial_cut_and_weight),
 
         #mi(pair_name + "_taggers", pair[0],  pair[1], good_vars_200_300, fiducial_cut_and_weight, fiducial_cut_and_weight),
         #mi(pair_name + "_taggers", pair[0],  pair[1], good_vars_470_600, fiducial_cut_and_weight, fiducial_cut_and_weight),

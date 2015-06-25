@@ -23,7 +23,7 @@ from TTH.Plotting.gregor.TopSamples import files
 # Configuration
 ########################################
 
-basepath = '/scratch/gregor/'
+basepath = '/eos/uscms/store/user/camclean/TopTagEfficiency/PHYS14_PU20_BX25/ntop_v20_drOriginal_decayingHadtop_13tev_PU20bx25/'
 
 #to_process  = ["zprime_m1000"]
 to_process  = files.keys()
@@ -34,7 +34,7 @@ for k in to_process:
     input_name = files[k]
     input_tree_name = "tree"
 
-    input_pickle_file_name = "/shome/gregor/TTH-73X/CMSSW/src/TTH/Plotting/python/gregor/flat_pt_weights.pickle"
+    input_pickle_file_name = "/uscms/home/camclean/nobackup/PHYS14/CMSSW/src/TTH/Plotting/python/gregor/flat_pt_weights.pickle"
 
 
     ########################################
@@ -66,7 +66,7 @@ for k in to_process:
     AH.addScalarBranches(variables,
                          variable_types,
                          output_tree,
-                         ["weight","pt", "eta"],
+                         ["weight","pt", "eta","weight_pt","weight_eta"],
                          datatype = 'float')
 
 
@@ -130,14 +130,27 @@ for k in to_process:
         pt = AH.getter(input_tree, pt_param_name)
         eta = AH.getter(input_tree, eta_param_name)
         value = pt_fun(pt) * eta_fun(eta)
+        value_pt = pt_fun(pt)
+        value_eta = eta_fun(eta)
+
         if value > 0:
             weight = 1/(value)
         else:
             weight = 0
-
+        if value_pt > 0:
+            weight_pt = 1/(value_pt)
+        else:
+            weight_pt = 0
+        if value_eta > 0:
+            weight_eta = 1/(value_eta)
+        else:
+            weight_eta = 0
+            
         variables["weight"][0] = weight
         variables["eta"][0]    = eta
         variables["pt"][0]     = pt
+        variables["weight_pt"][0] = weight_pt
+        variables["weight_eta"][0] = weight_eta
 
         output_tree.Fill()
     # End of event loop

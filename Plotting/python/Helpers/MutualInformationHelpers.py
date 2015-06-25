@@ -510,9 +510,9 @@ def MakePlots(mis, files, input_treename = 'tree'):
 
 
       h_mi.LabelsOption("v","X")
-      h_mi.GetXaxis().SetLabelSize(0.035)
-      h_mi.GetYaxis().SetLabelSize(0.035)
-      h_mi.GetZaxis().SetLabelSize(0.03)
+      h_mi.GetXaxis().SetLabelSize(0.025)
+      h_mi.GetYaxis().SetLabelSize(0.025)
+      h_mi.GetZaxis().SetLabelSize(0.025)
       
       draw_opts = "COLZ TEXT"
 

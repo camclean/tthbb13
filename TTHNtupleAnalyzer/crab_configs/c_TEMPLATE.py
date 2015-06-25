@@ -10,7 +10,7 @@ config.General.transferLogs = True
 config.section_("JobType")
 config.JobType.pluginName = 'Analysis'
 config.JobType.allowNonProductionCMSSW = True
-config.JobType.maxJobRuntimeMin = 60*48 #maximal job runtime in minute
+config.JobType.maxJobRuntimeMin = 60*24 #maximal job runtime in minute
 config.JobType.scriptExe = 'myScript.sh'
 config.JobType.inputFiles = ["../python/MakeTaggingNtuple.py", "../python/AccessHelpers.py"]
 config.JobType.outputFiles = ["output-tagging.root"]
@@ -20,8 +20,8 @@ config.Data.inputDBS = 'global'
 config.Data.splitting = 'LumiBased'
 config.Data.publication = False
 
-config.Data.unitsPerJob = 100
-#config.Data.totalUnits = 5
+config.Data.unitsPerJob = 4
+#config.Data.totalUnits = 4
 
 config.section_("Site")
 

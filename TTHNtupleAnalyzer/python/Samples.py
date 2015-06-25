@@ -72,7 +72,44 @@ Samples = {
     "zprime_m2000_1p_13tev" : "/ZPrimeToTTJets_M2000GeV_W20GeV_Tune4C_13TeV-madgraph-tauola/Spring14miniaod-PU20bx25_POSTLS170_V5-v1/MINIAODSIM",
     "zprime_m3000_1p_13tev" : "/ZPrimeToTTJets_M3000GeV_W30GeV_Tune4C_13TeV-madgraph-tauola/Spring14miniaod-PU20bx25_POSTLS170_V5-v1/MINIAODSIM",
     "zprime_m4000_1p_13tev" : "/ZPrimeToTTJets_M4000GeV_W40GeV_Tune4C_13TeV-madgraph-tauola/Spring14miniaod-PU20bx25_POSTLS170_V5-v1/MINIAODSIM",
-}
+
+    #######################################
+    # 13 TeV
+    # 40 PU, 50 bs Bunch Spacing (CSA 2014)
+    #######################################
+
+    # Zprime -> ttbar -> jets, Width = 10% of Mass
+    "zprime_m3000_10p_13tev_PU40bx50" : "/ZPrimeToTTJets_M3000GeV_W300GeV_Tune4C_13TeV-madgraph-tauola/Spring14miniaod-141029_PU40bx50_PLS170_V6AN2-v1/MINIAODSIM",
+
+    # Zprime -> ttbar -> jets, Width = 1% of Mass
+    "zprime_m3000_1p_13tev_PU40bx50" : "/ZPrimeToTTJets_M3000GeV_W30GeV_Tune4C_13TeV-madgraph-tauola/Spring14miniaod-141029_PU40bx50_PLS170_V6AN2-v1/MINIAODSIM",
+
+    #######################################
+    # 13 TeV
+    # 20 PU, 25 bs Bunch Spacing (PHYS 2014)
+    #######################################
+    
+    # Zprime -> ttbar -> jets, Width = 10% of Mass
+    "zprime_m1000_10p_13tev_PU20bx25" : "/ZPrimeToTTJets_M1000GeV_W100GeV_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1/MINIAODSIM",
+    "zprime_m2000_10p_13tev_PU20bx25" : "/ZPrimeToTTJets_M2000GeV_W200GeV_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1/MINIAODSIM",
+    "zprime_m3000_10p_13tev_PU20bx25" : "/ZPrimeToTTJets_M3000GeV_W300GeV_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1/MINIAODSIM",
+
+    # Zprime -> ttbar -> jets, Width = 1% of Mass
+    "zprime_m1000_1p_13tev_PU20bx25" : "/ZPrimeToTTJets_M1000GeV_W10GeV_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1/MINIAODSIM",
+    "zprime_m2000_1p_13tev_PU20bx25" : "/ZPrimeToTTJets_M2000GeV_W20GeV_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1/MINIAODSIM",
+    "zprime_m3000_1p_13tev_PU20bx25" : "/ZPrimeToTTJets_M3000GeV_W30GeV_Tune4C_13TeV-madgraph-tauola/Phys14DR-PU20bx25_PHYS14_25_V1-v1/MINIAODSIM",
+
+    # QCD, Pythia 8, binned in Ht
+    "qcd_ht_500_1000_13tev_PU20bx25" : "/QCD_HT-500To1000_13TeV-madgraph/Phys14DR-PU20bx25_PHYS14_25_V1_ext1-v1/MINIAODSIM",
+    "qcd_ht_1000_inf_13tev_PU20bx25" : "/QCD_HT_1000ToInf_13TeV-madgraph/Phys14DR-PU20bx25_PHYS14_25_V1_ext1-v1/MINIAODSIM",
+
+    # QCD, Pythia 8, binned in Pt
+    "qcd_pt_300_470_13tev_PU20bx25" : "/QCD_Pt-300to470_Tune4C_13TeV_pythia8/Phys14DR-PU20bx25_trkalmb_castor_PHYS14_25_V1-v2/MINIAODSIM",
+    "qcd_pt_470_600_13tev_PU20bx25" : "/QCD_Pt-470to600_Tune4C_13TeV_pythia8/Phys14DR-PU20bx25_trkalmb_castor_PHYS14_25_V1-v2/MINIAODSIM",
+    "qcd_pt_600_800_13tev_PU20bx25" : "/QCD_Pt-600to800_Tune4C_13TeV_pythia8/Phys14DR-PU20bx25_trkalmb_castor_PHYS14_25_V1-v1/MINIAODSIM",
+    "qcd_pt_800_1000_13tev_PU20bx25" : "/QCD_Pt-800to1000_Tune4C_13TeV_pythia8/Phys14DR-PU20bx25_trkalmb_castor_PHYS14_25_V1-v2/MINIAODSIM",
+    "qcd_pt_1000_1400_13tev_PU20bx25" : "/QCD_Pt-1000to1400_Tune4C_13TeV_pythia8/Phys14DR-PU20bx25_trkalmb_castor_PHYS14_25_V1-v1/MINIAODSIM",
+    }
 
 
 

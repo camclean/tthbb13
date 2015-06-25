@@ -52,10 +52,10 @@ def submit(name,
            version,        
            cmssw_config_path,
            cmssw_config_script = "Main_cfg.py",
-           site = "T2_CH_CSCS",
+           site = "T3_US_FNALLPC",
            template_filename = "c_TEMPLATE.py",
            cfg_filename = "c_tmp.py",
-           blacklist = []):
+           blacklist = "T1*",):
     """Submit a single job to the Grid"""
 
     # Import template, add parameters and save to new file
@@ -67,10 +67,13 @@ def submit(name,
     template.config.JobType.psetName = cmssw_config_path + cmssw_config_script
     template.config.Data.inputDataset = Samples[sample_shortname]
     template.config.Site.storageSite = site
+    #template.config.JobType.maxMemoryMB = 4*1024
 
     if blacklist:
         template.config.Site.blacklist = blacklist
 
+    #if whitelist:
+    #    template.config.Site.whitelist = whitelist
 
     outfile = open(cfg_filename, "w")
     outfile.write(str(template.config))
